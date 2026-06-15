@@ -34,6 +34,40 @@ O sistema permite:
 Usuário: admin@clinic.com
 Senha: 123456
 
+---
+
+## Execução com Docker
+
+O projeto também pode ser executado utilizando Docker e Docker Compose, facilitando a criação do ambiente local com API e banco de dados.
+
+---
+
+## Requisitos para execução com Docker
+
+Antes de executar com Docker, é necessário ter instalado:
+
+- Docker Desktop
+- Docker Compose
+- WSL habilitado, caso esteja utilizando Windows
+- Git
+
+---
+
+## Estrutura esperada para Docker
+
+A solução deve conter arquivos semelhantes a estes na raiz do projeto:
+
+```txt
+AgendaClinica
+├── docker-compose.yml
+├── src
+│   ├── AgendaClinica.Api
+│   │   └── Dockerfile
+│   ├── AgendaClinica.Application
+│   ├── AgendaClinica.Domain
+│   └── AgendaClinica.Infrastructure
+└── tests
+
 ## Arquitetura do Projeto
 
 A solução foi organizada em camadas seguindo princípios de DDD e separação de responsabilidades.
@@ -49,3 +83,5 @@ AgendaClinica
 └── tests
     ├── AgendaClinica.Domain.Tests
     └── AgendaClinica.Application.Tests
+
+
