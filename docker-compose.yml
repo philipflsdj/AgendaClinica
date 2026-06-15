@@ -1,0 +1,44 @@
+
+
+services:
+  agendaclinica.web:
+    image: agendaclinica-web
+    build:
+      context: ./frontend/agendaclinica-web
+      dockerfile: Dockerfile
+    container_name: agendaclinica-web
+    ports:
+      - "4200:80"
+    depends_on:
+      - agendaclinica.api
+
+  agendaclinica.api:
+    image: agendaclinica-api
+    build:
+      context: .
+      dockerfile: src/AgendaClinica.Api/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - agendaclinica.postgres
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=agendaclinica.postgres;Port=5432;Database=AgendaClinicaDb;Username=postgres;Password=postgres
+
+  agendaclinica.postgres:
+    image: postgres:16
+    container_name: agendaclinica-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: AgendaClinicaDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - agendaclinica_postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+
+volumes:
+  agendaclinica_postgres_data:

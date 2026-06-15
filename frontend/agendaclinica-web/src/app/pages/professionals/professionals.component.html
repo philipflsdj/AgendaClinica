@@ -1,0 +1,84 @@
+    <div class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 class="text-slate-800 font-semibold text-lg">Profissionais</h1>
+          <p class="text-xs text-slate-400 mt-1">Gerencie os profissionais de saúde cadastrados.</p>
+        </div>
+        <button (click)="openForm()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all">
+          <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">add</mat-icon>
+          Novo Profissional
+        </button>
+      </div>
+
+      @if (showForm()) {
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+          <h3 class="text-sm font-medium text-slate-800 mb-4 flex items-center gap-2">
+            <mat-icon class="text-blue-500 w-5 h-5 flex items-center justify-center">{{ editingId() ? 'edit' : 'person_add' }}</mat-icon>
+            {{ editingId() ? 'Editar Profissional' : 'Cadastrar Profissional' }}
+          </h3>
+          <form [formGroup]="professionalForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label for="nomeCompleto" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Nome Completo</label>
+                <input id="nomeCompleto" formControlName="nomeCompleto" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-700">
+              </div>
+              <div>
+                <label for="especialidade" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Especialidade</label>
+                <input id="especialidade" formControlName="especialidade" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-700">
+              </div>
+              <div>
+                <label for="numeroRegistro" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Registro (CRM, CRO, etc)</label>
+                <input id="numeroRegistro" formControlName="numeroRegistro" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-700">
+              </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+              <button type="button" (click)="closeForm()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-md transition-colors border border-slate-200">Cancelar</button>
+              <button type="submit" [disabled]="professionalForm.invalid || loading()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 flex items-center justify-center">
+                Salvar Profissional
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col w-full">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Nome</th>
+                <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Especialidade</th>
+                <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Registro</th>
+                <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50 text-slate-800">
+              @for (prof of professionals(); track prof.id) {
+                <tr class="hover:bg-slate-50/50">
+                  <td class="px-6 py-4">
+                    <p class="text-sm font-medium text-slate-700">{{ prof.nomeCompleto }}</p>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ prof.especialidade }}</td>
+                  <td class="px-6 py-4 text-sm font-mono text-blue-600">{{ prof.numeroRegistro }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <button (click)="editProfessional(prof)" class="text-slate-400 hover:text-blue-600 transition-colors p-1" title="Editar">
+                      <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">edit</mat-icon>
+                    </button>
+                    <button (click)="deleteProfessional(prof.id)" class="text-slate-400 hover:text-red-600 transition-colors p-1" title="Excluir">
+                      <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="px-6 py-12 text-center">
+                    <mat-icon class="text-slate-300 text-3xl mb-1">badge</mat-icon>
+                    <p class="text-sm text-slate-400">Nenhum profissional cadastrado.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

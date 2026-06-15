@@ -1,0 +1,47 @@
+    <div class="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <h2 class="mt-6 text-3xl font-extrabold text-slate-800 tracking-tight italic">Clínica<span class="text-blue-500">Gestão</span></h2>
+        <p class="mt-2 text-sm text-slate-500">Faça login para acessar o sistema gerencial</p>
+      </div>
+
+      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-sm border border-slate-100 sm:rounded-xl sm:px-10">
+          <form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div>
+              <label for="email" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1"> Email </label>
+              <div class="mt-1">
+                <input id="email" formControlName="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-slate-200 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-slate-700">
+              </div>
+            </div>
+
+            <div>
+              <label for="password" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1"> Senha </label>
+              <div class="mt-1">
+                <input id="password" formControlName="password" type="password" autocomplete="current-password" required class="appearance-none block w-full px-3 py-2 border border-slate-200 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-slate-700">
+              </div>
+            </div>
+
+            @if (errorMsg()) {
+              <div class="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md text-xs flex items-center gap-2">
+                <span class="font-bold flex items-center justify-center shrink-0">!</span>
+                {{ errorMsg() }}
+              </div>
+            }
+
+            <div>
+              <button type="submit" [disabled]="loginForm.invalid || loading()" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200">
+                @if (loading()) {
+                  Entrando...
+                } @else {
+                  Entrar
+                }
+              </button>
+            </div>
+            
+            <div class="text-[10px] text-center text-slate-400 mt-4 uppercase tracking-wider font-bold">
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>

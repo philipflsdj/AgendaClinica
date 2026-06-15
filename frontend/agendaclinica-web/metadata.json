@@ -1,0 +1,6 @@
+{
+  "name": "Clínica Gestão",
+  "description": "Sistema para gestão de agendamentos de consultas em uma clínica.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

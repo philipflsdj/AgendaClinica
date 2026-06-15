@@ -1,0 +1,61 @@
+    <div class="flex h-screen w-full bg-slate-50 font-sans overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-slate-900 flex flex-col">
+        <div class="p-6 flex items-center gap-3">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <mat-icon class="text-white text-[20px] w-5 h-5 flex items-center justify-center">health_and_safety</mat-icon>
+          </div>
+          <span class="text-white font-bold tracking-tight text-xl italic">Clínica<span class="text-blue-400">Gestão</span></span>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-1 mt-4">
+          <a routerLink="/appointments" routerLinkActive="bg-blue-600 text-white" [routerLinkActiveOptions]="{exact: false}" class="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-white [&.bg-blue-600]:text-white">
+            <mat-icon class="text-[20px] w-5 h-5 flex items-center justify-center">event</mat-icon>
+            Agendamentos
+          </a>
+          <a routerLink="/patients" routerLinkActive="bg-blue-600 text-white" [routerLinkActiveOptions]="{exact: false}" class="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-white [&.bg-blue-600]:text-white">
+            <mat-icon class="text-[20px] w-5 h-5 flex items-center justify-center">people</mat-icon>
+            Pacientes
+          </a>
+          <a routerLink="/professionals" routerLinkActive="bg-blue-600 text-white" [routerLinkActiveOptions]="{exact: false}" class="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-white [&.bg-blue-600]:text-white">
+            <mat-icon class="text-[20px] w-5 h-5 flex items-center justify-center">medical_services</mat-icon>
+            Profissionais
+          </a>
+        </nav>
+
+        <div class="p-4 mt-auto">
+          <button (click)="logout()" class="flex w-full items-center gap-3 px-4 py-3 bg-slate-800 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700 hover:text-red-400 transition-colors">
+            <mat-icon class="text-[20px] w-5 h-5 flex items-center justify-center">logout</mat-icon>
+            Sair do Sistema
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
+          <div>
+            <h2 class="text-slate-800 font-semibold text-lg">Painel de Gestão Clínica</h2>
+            <p class="text-xs text-slate-400">Sistema Gerencial</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-px h-6 bg-slate-200 mx-2"></div>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <p class="text-sm font-medium text-slate-700 leading-none">Usuário Atual</p>
+                <span class="text-[10px] text-slate-400 uppercase">Admin</span>
+              </div>
+              <div class="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold border-2 border-white shadow-sm">
+                US
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-8">
+          <div class="max-w-6xl mx-auto space-y-6">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </main>
+    </div>

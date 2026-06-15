@@ -1,0 +1,185 @@
+    <div class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 class="text-slate-800 font-semibold text-lg">Agendamentos</h1>
+          <p class="text-xs text-slate-400 mt-1">Gerencie a agenda dos profissionais de saúde.</p>
+        </div>
+        <button (click)="openForm()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all flex items-center gap-2">
+          <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">add</mat-icon>
+          Nova Consulta
+        </button>
+      </div>
+
+      @if (showForm()) {
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+          <h3 class="text-sm font-medium text-slate-800 mb-4 flex items-center gap-2">
+            <mat-icon class="text-blue-500 w-5 h-5 flex items-center justify-center">edit_calendar</mat-icon>
+            {{ editingId() ? 'Editar Consulta' : 'Agendar Consulta' }}
+          </h3>
+          <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            
+            @if (errorMsg()) {
+              <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-xs flex items-start gap-3">
+                <mat-icon class="text-red-500 shrink-0 w-4 h-4 text-[16px] flex items-center justify-center">error_outline</mat-icon>
+                <span>{{ errorMsg() }}</span>
+              </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label for="patientId" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Paciente</label>
+                <select id="patientId" formControlName="pacienteId" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-slate-700">
+                  <option value="">Selecione um paciente</option>
+                  @for (p of patients(); track p.id) {
+                    <option [value]="p.id">{{ p.nomeCompleto }} ({{ p.documento }})</option>
+                  }
+                </select>
+              </div>
+              
+              <div>
+                <label for="professionalId" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Profissional</label>
+                <select id="professionalId" formControlName="profissionalId" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-slate-700">
+                  <option value="">Selecione um profissional</option>
+                  @for (p of professionals(); track p.id) {
+                    <option [value]="p.id">{{ p.nomeCompleto }} - {{ p.especialidade }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label for="date" class="block text-xs font-medium text-slate-500 uppercase mb-1 tracking-wider">Data e Hora</label>
+                <input id="date" formControlName="inicioEm" type="datetime-local" class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-700">
+                <p class="text-[10px] text-slate-400 mt-1">Segunda a Sexta, 08:00 às 18:00 (Blocos de 30 min).</p>
+              </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6">
+              <button type="button" (click)="closeForm()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-md transition-colors border border-slate-200">Cancelar</button>
+              <button type="submit" [disabled]="appointmentForm.invalid || loading()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 flex items-center justify-center">
+                {{ editingId() ? 'Salvar Alterações' : 'Confirmar Agendamento' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <!-- Filtro Profissional -->
+        <div class="w-full lg:w-64 shrink-0 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Filtrar Agenda</h3>
+          <div class="space-y-1">
+            <button (click)="selectedProfessionalId.set(null)" 
+                    [class.bg-blue-50]="!selectedProfessionalId()" 
+                    [class.text-blue-600]="!selectedProfessionalId()"
+                    [class.font-medium]="!selectedProfessionalId()"
+                    class="w-full text-left px-3 py-2 rounded-md text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+              Todos os profissionais
+            </button>
+            @for (p of professionals(); track p.id) {
+              <button (click)="selectedProfessionalId.set(p.id)"
+                      [class.bg-blue-50]="selectedProfessionalId() === p.id" 
+                      [class.text-blue-600]="selectedProfessionalId() === p.id"
+                      [class.font-medium]="selectedProfessionalId() === p.id"
+                      class="w-full text-left px-3 py-2 rounded-md text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                {{ p.nomeCompleto }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col w-full">
+          <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h2 class="font-semibold text-slate-700 text-sm">Agenda Diária</h2>
+            <input type="date" [ngModel]="currentDate()" (ngModelChange)="currentDate.set($event)" class="text-sm border border-slate-200 rounded-md px-3 py-1.5 text-slate-700 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div class="flex-1 overflow-x-auto">
+            <table class="w-full text-left">
+              <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Horário</th>
+                  <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Paciente</th>
+                  <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Profissional</th>
+                  <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase">Status</th>
+                  <th scope="col" class="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50">
+                @if (isWeekend()) {
+                   <tr>
+                     <td colspan="5" class="px-6 py-12 text-center">
+                        <mat-icon class="text-slate-300 text-3xl mb-1">weekend</mat-icon>
+                        <p class="text-sm text-slate-400">Atendimento apenas de segunda a sexta.</p>
+                     </td>
+                   </tr>
+                } @else if (!selectedProfessionalId()) {
+                   @for (apt of dailyAppointments(); track apt.id) {
+                     <tr class="hover:bg-slate-50/50">
+                       <td class="px-6 py-4 text-sm font-mono text-blue-600">{{ apt.inicioEm | date:'HH:mm' }}</td>
+                       <td class="px-6 py-4">
+                         <p class="text-sm font-medium text-slate-700">{{ getPatientName(apt.pacienteId) }}</p>
+                         <p class="text-[10px] text-slate-400 italic">CPF: {{ getPatientDocument(apt.pacienteId) }}</p>
+                       </td>
+                       <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ getProfessionalName(apt.profissionalId) }}</td>
+                       <td class="px-6 py-4">
+                         <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">CONFIRMADO</span>
+                       </td>
+                       <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+                         <button (click)="editAppointment(apt)" class="text-slate-400 hover:text-blue-600 transition-colors p-1" title="Editar">
+                           <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">edit</mat-icon>
+                         </button>
+                         <button (click)="deleteAppointment(apt.id)" class="text-slate-400 hover:text-red-600 transition-colors p-1" title="Excluir">
+                           <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">delete</mat-icon>
+                         </button>
+                       </td>
+                     </tr>
+                   } @empty {
+                     <tr>
+                       <td colspan="5" class="px-6 py-12 text-center">
+                          <mat-icon class="text-slate-300 text-3xl mb-1">event_busy</mat-icon>
+                          <p class="text-sm text-slate-400">Nenhuma consulta agendada para este dia.</p>
+                       </td>
+                     </tr>
+                   }
+                } @else {
+                   @for (slot of agendaSlotsData(); track slot.time) {
+                      @if (slot.isFree) {
+                         <tr class="hover:bg-slate-50/50">
+                           <td class="px-6 py-4 text-sm font-mono text-blue-600">{{ slot.time }}</td>
+                           <td class="px-6 py-4 text-slate-400 italic text-sm">-- Horário Livre --</td>
+                           <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ getProfessionalName(selectedProfessionalId() || '') }}</td>
+                           <td class="px-6 py-4">
+                              <span class="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-bold rounded-full">DISPONÍVEL</span>
+                           </td>
+                           <td class="px-6 py-4 text-right">
+                              <button (click)="openSchedule(slot.time)" class="text-xs text-blue-600 font-bold hover:underline">Agendar</button>
+                           </td>
+                         </tr>
+                      } @else {
+                         <tr class="hover:bg-slate-50/50">
+                           <td class="px-6 py-4 text-sm font-mono text-blue-600">{{ slot.time }}</td>
+                           <td class="px-6 py-4">
+                             <p class="text-sm font-medium text-slate-700">{{ getPatientName(slot.appointment?.pacienteId || '') }}</p>
+                             <p class="text-[10px] text-slate-400 italic">CPF: {{ getPatientDocument(slot.appointment?.pacienteId || '') }}</p>
+                           </td>
+                           <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ getProfessionalName(slot.appointment?.profissionalId || '') }}</td>
+                           <td class="px-6 py-4">
+                             <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">CONFIRMADO</span>
+                           </td>
+                           <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+                             <button (click)="editAppointment(slot.appointment!)" class="text-slate-400 hover:text-blue-600 transition-colors p-1" title="Editar">
+                               <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">edit</mat-icon>
+                             </button>
+                             <button (click)="deleteAppointment(slot.appointment!.id)" class="text-slate-400 hover:text-red-600 transition-colors p-1" title="Excluir">
+                               <mat-icon class="text-[18px] w-4 h-4 flex items-center justify-center">delete</mat-icon>
+                             </button>
+                           </td>
+                         </tr>
+                      }
+                   }
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
