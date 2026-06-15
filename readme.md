@@ -68,6 +68,11 @@ AgendaClinica
 │   └── AgendaClinica.Infrastructure
 └── tests
 
+```
+```txt
+docker compose up -d --build
+```
+
 ## Arquitetura do Projeto
 
 A solução foi organizada em camadas seguindo princípios de DDD e separação de responsabilidades.
