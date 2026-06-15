@@ -89,4 +89,17 @@ AgendaClinica
     ├── AgendaClinica.Domain.Tests
     └── AgendaClinica.Application.Tests
 
+```
+---
 
+## Documentação da API - Swagger
+
+Após executar a aplicação localmente ou via Docker, a documentação da API estará disponível pelo Swagger.
+
+### Acesso ao Swagger
+
+Se estiver executando via Docker, acesse:
+
+```txt
+http://localhost:8080/swagger
+```
